@@ -94,8 +94,7 @@ class _HomeState extends State<Home> {
     final ctrl = JarVideoPlayerController();
     return JarVideoPlayer(
       url:
-          // "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-          "https://postkarocdn.blr1.digitaloceanspaces.com/Sanatan/post/videos/1770795580793.mp4",
+          "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
       // only works manually only and only  if reelsMode is set to false (default is false),
       autoPlay: false,
       loop: false,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -43,13 +45,13 @@ class _JarVideoPlayerState extends State<JarVideoPlayer>
 
   Future<void> _init() async {
     final currentToken = ++_initToken;
-
+    log("here");
     await _controller.initialize(
       widget.url,
-      autoPlay: false, // 🔥 never autoplay during init
       loop: widget.reelsMode ? true : widget.loop,
     );
 
+    log("here 1");
     // If widget was disposed or another init started, ignore
     if (!mounted || _disposed || currentToken != _initToken) {
       await _controller.disposeVideo();

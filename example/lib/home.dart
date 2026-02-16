@@ -92,14 +92,16 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildVideoPage(int index) {
-    final ctrl = JarVideoPlayerController();
+    // final ctrl = JarVideoPlayerController();
     final videoUrl = videoUrls[index % videoUrls.length];
 
     return JarVideoPlayer(
       url: videoUrl,
       autoPlay: false,
       loop: false,
-      controller: ctrl,
+
+      ///if you want reel mode, controller is not necessary
+      // controller: ctrl,
       reelsMode: true,
     );
   }

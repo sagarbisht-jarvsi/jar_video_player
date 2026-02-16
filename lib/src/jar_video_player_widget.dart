@@ -156,9 +156,18 @@ class _JarVideoPlayerState extends State<JarVideoPlayer>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (!_controller.isInitialized) return;
 
+    ///automatically pause when the screen is not in focus or is not visible
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
       _safePause();
+    }
+
+    ///automatically play the video if it comes back to focus or is visible.
+
+    else if (state == AppLifecycleState.resumed) {
+      if (widget.autoPlay || widget.reelsMode) {
+        _safePlay();
+      }
     }
   }
 

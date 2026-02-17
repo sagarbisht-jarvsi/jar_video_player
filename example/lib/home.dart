@@ -17,14 +17,9 @@ class _HomeState extends State<Home> {
   late List<bool> isVideoPage;
 
   final List<String> videoUrls = [
-    // "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-    // "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
-    "https://postkarocdn.blr1.digitaloceanspaces.com/postKaro/videos/1771216148375.mp4",
-    "https://postkarocdn.blr1.digitaloceanspaces.com/postKaro/videos/1771216127404.mp4",
-    "https://postkarocdn.blr1.digitaloceanspaces.com/postKaro/videos/1771216102250.mp4",
-    "https://postkarocdn.blr1.digitaloceanspaces.com/postKaro/videos/1771216082997.mp4",
-    "https://postkarocdn.blr1.digitaloceanspaces.com/postKaro/videos/1771216102250.mp4",
-    "https://postkarocdn.blr1.digitaloceanspaces.com/postKaro/videos/1771216102250.mp4",
+    "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+    "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+
   ];
 
   @override
@@ -38,7 +33,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -101,21 +96,33 @@ class _HomeState extends State<Home> {
     // final ctrl = JarVideoPlayerController();
     final videoUrl = videoUrls[index % videoUrls.length];
 
-    return JarVideoPlayerOverlay(
-      url: videoUrl,
-      autoPlay: false,
-      loop: false,
-      bottomStripe: Container(
-        color: Colors.red,
-        height: 50,
-        child: Text("Hello Sagar"),
-      ),
-      onDownload: () {},
-      onShare: () {},
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 80),
 
-      ///if you want reel mode, controller is not necessary
-      // controller: ctrl,
-      reelsMode: true,
+      child: JarVideoPlayer(
+        url: videoUrl,
+        // aspectRatio: 9/16,
+        // reelsMode: true,
+
+        // topStripe: Container(
+        //   color: Colors.green,
+        //   width: double.infinity,
+        //   height: 50,
+        //   child: Text("Hello leaders", style: TextStyle(fontSize: 37)),
+        // ),
+        // bottomStripe: Container(
+        //   color: Colors.red,
+        //   width: double.infinity,
+        //   height: 70,
+        //   child: Text("Hello Sagar"),
+        // ),
+        // onDownload: () {},
+        // onShare: () {},
+
+        ///if you want reel mode, controller is not necessary
+        // controller: ctrl,
+      ),
+
     );
   }
 

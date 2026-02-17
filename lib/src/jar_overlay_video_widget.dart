@@ -1,6 +1,3 @@
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:jar_video_player/src/utils.dart';
 import 'package:jar_video_player/src/video_export_service.dart';
@@ -11,12 +8,14 @@ class JarVideoPlayerOverlay extends StatefulWidget {
   final String url;
   final JarVideoPlayerController? controller;
   final Widget? bottomStripe;
+  final Widget? topStripe;
   final VoidCallback? onDownload;
   final VoidCallback? onShare;
-  final AlignmentGeometry downloadShareAlignment;
+  final double right;
   final bool reelsMode;
   final bool autoPlay;
   final bool loop;
+  final double aspectRatio;
 
   const JarVideoPlayerOverlay({
     super.key,
@@ -28,7 +27,9 @@ class JarVideoPlayerOverlay extends StatefulWidget {
     this.reelsMode = false,
     this.autoPlay = false,
     this.loop = false,
-    this.downloadShareAlignment = Alignment.centerRight,
+    this.right = 12,
+    this.topStripe,
+    this.aspectRatio = 9 / 16,
   });
 
   @override
@@ -36,51 +37,34 @@ class JarVideoPlayerOverlay extends StatefulWidget {
 }
 
 class _JarVideoPlayerOverlayState extends State<JarVideoPlayerOverlay> {
-  final GlobalKey _overlayKey = GlobalKey();
+  final GlobalKey _bottomOverlayKey = GlobalKey();
+  final GlobalKey _topOverlayKey = GlobalKey();
   bool _isProcessing = false;
 
   Future<void> _handleDownload() async {
     if (_isProcessing) return;
 
-    debugPrint("DOWNLOAD CALLED");
-
     setState(() => _isProcessing = true);
 
     try {
       final path = await exportVideoWithOverlay(
-        videoUrl: widget.url,
-        overlayKey: _overlayKey,
-      );
+          videoUrl: widget.url,
+          bottomOverlayKey: _bottomOverlayKey,
+          downloadWithOverlay: widget.bottomStripe != null,
+          topOverlayKey: widget.topStripe == null ? null : _topOverlayKey);
 
       if (path != null) {
-        debugPrint("Export path: $path");
-        debugPrint("File exists: ${File(path).existsSync()}");
-
         await MediaStore.ensureInitialized();
-        MediaStore.appFolder = "JarVideoPlayer";
+        MediaStore.appFolder = "Overlay Video";
 
-        final result = await MediaStore()
-            .saveFile(
+        await MediaStore().saveFile(
           tempFilePath: path,
           dirType: DirType.video,
           dirName: DirName.movies,
-        )
-            .then(
-          (value) {
-            log("download success");
-          },
         );
-
-        // final result = await MediaStore().saveFile(
-        //   tempFilePath: path,
-        //   dirType: DirType.video,
-        //   dirName: DirName.movies,
-        // );
-
-        debugPrint("MediaStore result: $result");
       }
     } catch (e) {
-      debugPrint("Download error: $e");
+      throw e.toString();
     }
 
     if (mounted) {
@@ -91,22 +75,21 @@ class _JarVideoPlayerOverlayState extends State<JarVideoPlayerOverlay> {
   Future<void> _handleShare() async {
     if (_isProcessing) return;
 
-    debugPrint("SHARE CALLED");
-
     setState(() => _isProcessing = true);
 
     try {
       final path = await exportVideoWithOverlay(
-        videoUrl: widget.url,
-        overlayKey: _overlayKey,
-      );
+          videoUrl: widget.url,
+          bottomOverlayKey: _bottomOverlayKey,
+          downloadWithOverlay: widget.bottomStripe != null,
+          topOverlayKey: widget.topStripe == null ? null : _topOverlayKey);
 
       if (path != null) {
         await shareVideo(path);
         widget.onShare?.call(); // optional external callback
       }
     } catch (e) {
-      debugPrint("Share error: $e");
+      throw e.toString();
     }
 
     if (mounted) {
@@ -116,70 +99,83 @@ class _JarVideoPlayerOverlayState extends State<JarVideoPlayerOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          /// 🎥 VIDEO (Never inside RepaintBoundary)
-          IgnorePointer(
-            ignoring: _isProcessing,
-            child: AspectRatio(
-              aspectRatio: 9 / 16,
-              child: JarVideoPlayer(
-                url: widget.url,
-                controller: widget.controller,
-                reelsMode: widget.reelsMode,
-                autoPlay: widget.autoPlay,
-                loop: widget.loop,
-              ),
-            ),
+    return Column(
+      children: [
+        /// top overlay Overlay
+
+        if (widget.topStripe != null)
+          RepaintBoundary(
+            key: _topOverlayKey,
+            child: widget.topStripe!,
           ),
 
-          /// 📌 Bottom Stripe (Captured Only This)
-          if (widget.bottomStripe != null)
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: RepaintBoundary(
-                key: _overlayKey,
-                child: widget.bottomStripe!,
+        Expanded(
+          child: Stack(
+            children: [
+              /// Video / Image (Full Screen Cover)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.red),
+                  ),
+                  child: JarVideoPlayer(
+                    url: widget.url,
+                    controller: widget.controller,
+                    reelsMode: widget.reelsMode,
+                    autoPlay: widget.autoPlay,
+                    loop: widget.loop,
+                    // aspectRatio: ,
+                  ),
+                ),
               ),
-            ),
 
-          /// 🔘 Buttons
-          Align(
-            alignment: widget.downloadShareAlignment,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _ActionButton(
-                    icon: Icons.download,
-                    onTap: _handleDownload,
-                    disabled: _isProcessing,
+              /// Bottom Overlay
+              if (widget.bottomStripe != null)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: RepaintBoundary(
+                    key: _bottomOverlayKey,
+                    child: widget.bottomStripe!,
                   ),
-                  const SizedBox(height: 16),
-                  _ActionButton(
-                    icon: Icons.share,
-                    onTap: _handleShare,
-                    disabled: _isProcessing,
+                ),
+
+              /// Buttons (center right)
+              Positioned(
+                right: 12,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _ActionButton(
+                        icon: Icons.download,
+                        onTap: _handleDownload,
+                        disabled: _isProcessing,
+                      ),
+                      const SizedBox(height: 16),
+                      _ActionButton(
+                        icon: Icons.share,
+                        onTap: _handleShare,
+                        disabled: _isProcessing,
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+
+              /// Loader
+              if (_isProcessing)
+                Container(
+                  color: Colors.black54,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+            ],
           ),
-
-          /// 🔥 Loader Overlay
-          if (_isProcessing)
-            Container(
-              color: Colors.black54,
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

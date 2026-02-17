@@ -24,6 +24,10 @@ class JarVideoPlayer extends StatefulWidget {
   /// Defaults to false.
   final bool autoPlay;
 
+  /// custom aspect ratio.
+  /// default value is 9/16
+  final double? aspectRatio;
+
   /// Whether the video should loop after completion.
   ///
   /// Defaults to false.
@@ -52,6 +56,7 @@ class JarVideoPlayer extends StatefulWidget {
     this.loop = false,
     this.routeObserver,
     this.reelsMode = false,
+    this.aspectRatio,
   });
   @override
   State<JarVideoPlayer> createState() => _JarVideoPlayerState();
@@ -76,8 +81,7 @@ class _JarVideoPlayerState extends State<JarVideoPlayer>
 
   Future<void> _init() async {
     final currentToken = ++_initToken;
-    await _controller
-        .initialize(
+    await _controller.initialize(
       widget.url,
       loop: widget.reelsMode ? true : widget.loop,
     );
@@ -238,12 +242,34 @@ class _JarVideoPlayerState extends State<JarVideoPlayer>
       return const Center(child: CircularProgressIndicator());
     }
 
+    // final vc = _controller.videoController;
+    //
+    // final video = AspectRatio(
+    //   aspectRatio: widget.aspectRatio ?? vc?.value.aspectRatio ?? 9 / 16,
+    //   child: vc != null ? VideoPlayer(vc) : const SizedBox.shrink(),
+    // );
     final vc = _controller.videoController;
 
-    final video = AspectRatio(
-      aspectRatio: vc?.value.aspectRatio ?? 9 / 16,
-      child: vc != null ? VideoPlayer(vc) : const SizedBox.shrink(),
-    );
+    Widget video;
+
+    if (widget.reelsMode) {
+      video = SizedBox.expand(
+        child: FittedBox(
+          fit: BoxFit.fill,
+          child: SizedBox(
+            width: vc!.value.size.width,
+            height: vc.value.size.height,
+            child: VideoPlayer(vc),
+          ),
+        ),
+      );
+    } else {
+      // 🎥 Normal Aspect Ratio Mode
+      video = AspectRatio(
+        aspectRatio: widget.aspectRatio ?? vc!.value.aspectRatio,
+        child: VideoPlayer(vc!),
+      );
+    }
 
     return Stack(
       alignment: Alignment.center,

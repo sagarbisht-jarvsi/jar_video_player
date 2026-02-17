@@ -32,7 +32,7 @@ Add the dependency to your `pubspec.yaml`:
 
 ``` yaml
 dependencies:
-  jar_video_player: ^0.1.0
+  jar_video_player: ^0.1.2
 ```
 
 Then run:
@@ -43,7 +43,7 @@ flutter pub get
 
 ------------------------------------------------------------------------
 
-## 🚀 Basic Usage
+## 🚀 Overlya Jar Video Player
 
 ``` dart
 import 'package:flutter/material.dart';
@@ -51,12 +51,35 @@ import 'package:jar_video_player/jar_video_player.dart';
 
 final controller = JarVideoPlayerController();
 
-JarVideoPlayer(
-  controller: controller,
-  url: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-  autoPlay: true,
-  loop: true,
-);
+JarVideoPlayerOverlay(
+        url: videoUrl,
+        aspectRatio: 9 / 16,
+        reelsMode: true,
+
+        ///top overlay widget
+        // topStripe: Container(
+        //   color: Colors.green,
+        //   width: double.infinity,
+        //   height: 50,
+        //   child: Text("Hello leaders", style: TextStyle(fontSize: 37)),
+        // ),
+
+        /// this is bottom overlay
+        bottomStripe: Container(
+          color: Colors.red,
+          width: double.infinity,
+          height: 70,
+          child: Text("Hello Sagar"),
+        ),
+
+        /// if you want custom downlaod or share functions
+        // onDownload: () {},
+        // onShare: () {},
+
+        ///if you want reel mode, controller is not necessary
+        // controller: ctrl,
+      ),
+    );
 ```
 
 ------------------------------------------------------------------------
@@ -150,8 +173,7 @@ Copyright (c) 2026 Sagar
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
 "Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software.
+without limitation the rights to use, copy, modify, merge, publish the Software.
 
 
 

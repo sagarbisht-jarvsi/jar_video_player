@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -59,7 +58,11 @@ Future<String?> downloadVideo(String videoUrl) async {
     final videoFileName = videoUrl.split('/').last.split('?').first;
 
     final videoFile = File('${tempDir.path}/$videoFileName');
+    if (await videoFile.exists()) {
+      return videoFile.path;
 
+      /// Already downloaded
+    }
     final response = await http.get(Uri.parse(videoUrl));
 
     if (response.statusCode == 200) {
@@ -111,7 +114,6 @@ Future<String?> mergeVideoWithOverlay(
   String? animatedOverlayPath,
   required OverlayAnimationType animationType,
 }) async {
-  log("animation type ${animationType.name}");
   try {
     final dir = await getTemporaryDirectory();
     final outputPath =

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-import 'jar_video_player_controller.dart';
+import '../helper/jar_video_player_controller.dart';
 
 /// A customizable video player widget for playing network videos.
 ///

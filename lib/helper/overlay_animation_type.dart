@@ -4,7 +4,7 @@ enum OverlayAnimationType {
   bottomToCenter,
   leftToRight,
   rightToLeft,
+  diagonalTopLeftToBottomRight,
   // centerToTopRight,
   // centerToBottomLeft,
-  diagonalTopLeftToBottomRight,
 }

@@ -42,6 +42,30 @@ flutter pub get
 ```
 
 ------------------------------------------------------------------------
+## 🚀 Some important permissions
+
+
+``` xml
+
+
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+
+<!-- Internet (required for downloading video) -->
+<uses-permission android:name="android.permission.INTERNET"/>
+
+<!-- Android 13+ (API 33+) -->
+<uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+
+<!-- Android 12 and below -->
+<uses-permission
+    android:name="android.permission.READ_EXTERNAL_STORAGE"
+    android:maxSdkVersion="32" />
+
+
+```
+
 
 ## 🚀 Overlya Jar Video Player
 

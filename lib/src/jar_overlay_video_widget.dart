@@ -90,27 +90,29 @@ class JarVideoPlayerOverlay extends StatefulWidget {
   ///
   final OverlayAnimationType? animationType;
 
-  const JarVideoPlayerOverlay({
-    super.key,
-    required this.url,
-    this.controller,
-    this.bottomStripe,
-    this.onDownload,
-    // this.overlayChild,
-    this.onShare,
-    this.reelsMode = false,
-    this.autoPlay = false,
-    this.loop = false,
-    this.right = 12,
-    this.topStripe,
-    this.aspectRatio = 9 / 16,
-    this.downloadIcon,
-    this.shareIcon,
-    this.downloadBackgroundColor,
-    this.shareBackgroundColor,
-    this.animatedOverlay,
-    this.animationType,
-  });
+  final Widget? shareDownloadProgressIndicator;
+
+  const JarVideoPlayerOverlay(
+      {super.key,
+      required this.url,
+      this.controller,
+      this.bottomStripe,
+      this.onDownload,
+      // this.overlayChild,
+      this.onShare,
+      this.reelsMode = false,
+      this.autoPlay = false,
+      this.loop = false,
+      this.right = 12,
+      this.topStripe,
+      this.aspectRatio = 9 / 16,
+      this.downloadIcon,
+      this.shareIcon,
+      this.downloadBackgroundColor,
+      this.shareBackgroundColor,
+      this.animatedOverlay,
+      this.animationType,
+      this.shareDownloadProgressIndicator});
 
   @override
   State<JarVideoPlayerOverlay> createState() => _JarVideoPlayerOverlayState();
@@ -279,12 +281,13 @@ class _JarVideoPlayerOverlayState extends State<JarVideoPlayerOverlay> {
 
               /// Loader
               if (_isProcessing)
-                Container(
-                  color: Colors.black54,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
+                widget.shareDownloadProgressIndicator ??
+                    Container(
+                      color: Colors.black54,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
             ],
           ),
         ),

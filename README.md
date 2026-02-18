@@ -32,7 +32,7 @@ Add the dependency to your `pubspec.yaml`:
 
 ``` yaml
 dependencies:
-  jar_video_player: ^0.1.2
+  jar_video_player: ^0.1.4
 ```
 
 Then run:
